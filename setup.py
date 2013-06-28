@@ -3,20 +3,20 @@
 
 from setuptools import setup, find_packages
 
-name = "ngram"
+name = "render"
 
 setup(
     name = name,
     version = "0.2.1",
     url = "http://silpa.org.in/NGram",
     license = "LGPL-3.0",
-    description = "n-gram genereator for indic languages",
+    description = "Convert wiki pages to pdf and text into images",
     author = "Santhosh Thottingal",
     author_email = "santhosh.thottingal@gmail.com",
-    long_description = """A n-gram generator for English, Hindi, Malayalam, Kannada and  Bengali""",
+    long_description = """Convert wiki pages to pdf and text into images""",
     packages = find_packages(),
     include_package_data = True,
     setup_requires = ['setuptools-git'],
-    install_requires = ['setuptools','syllabalizer'],
+    install_requires = ['setuptools','hyphenation'],
     zip_safe = False,
     )

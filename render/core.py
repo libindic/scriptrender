@@ -24,8 +24,8 @@ import hashlib
 import urllib
 import pango
 import pangocairo
+import  hyphenation
 from wiki2pdf import Wikiparser
-from hyphenator import Hyphenator
 from styles import *
 
 class Render:
@@ -98,7 +98,7 @@ class Render:
             surface = cairo.PDFSurface(outputfile, int(width), int(height))
         context = cairo.Context(surface)
         try:
-            text = hyphenator.getInstance().hyphenate(text, u'\u00AD')
+            text = hyphenation.getInstance().hyphenate(text, u'\u00AD')
         except:
             print("error while hyphenating. Proceeding without Hyphenation")
         width  = int(width)
