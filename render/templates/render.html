@@ -1,0 +1,228 @@
+{% extends "silpa.html" %}
+{% block modulescript %}
+<script type="text/javascript">
+    document.ready(function(){
+
+        $("#wiki2pdfform").submit(function(event)
+        {
+            event.preventDefault();
+            console.log(this);
+            renderpdf(this);
+
+            })
+        $("#rendertext").submit(function(event)
+        {
+            event.preventDefault();
+            console.log(this);
+            rendercontent(this);
+
+            })
+        })
+
+
+    function rendercontent(form)
+    {
+        $('#progress').html("Please Wait..");
+        $('#result').html("");
+        var text= form.text.value;
+        var width= form.width.value;
+        var height= form.height.value;
+        var size = form.fontsize.value;
+        var type = $('#format').val();
+        var color = $('#fontcolor').val();
+
+        var jsonRequest = {
+            "method" :  "render.render_text",
+            "params" : [text,type,width,height,color],
+            "id" : ""
+        };
+        $.ajax({
+            type: "POST",
+            contentType: "application/json; charset=utf-8",
+            url: "JSONRPC",
+            data: $.toJSON(jsonRequest),
+            dataType: "json",
+            success: function(msg) {
+                var resultobj =  msg.result
+
+                $('#progress').html("");
+                var resulthtml=""
+                if (type=="png")
+                    resulthtml="<img src='"+ resultobj+"' style='border:solid;border-width:2px;' />";
+                else
+                    resulthtml= "<a href= '" + resultobj+"' target='_new'>Open or Download " + type +"</a>";
+                $('#result').html(resulthtml);
+            },
+            error: function(msg) { alert(msg); }
+        });
+        return false;
+   }
+
+    function renderpdf(form){
+        $('#pdfprogress').html("Please Wait..");
+    $('#result').html("");
+    var url= form.wikiurl.value;
+    var jsonRequest = {
+         "method" :  "render.wiki2pdf",
+         "params" : [url],
+         "id" : ""
+    };
+    $.ajax({
+        type: "POST",
+        contentType: "application/json; charset=utf-8",
+        url: "JSONRPC",
+        data: $.toJSON(jsonRequest),
+        dataType: "json",
+        success: function(msg) {
+            var resultobj =  msg.result ;
+            $('#pdfprogress').html("");
+            var resulthtml= "<a href= '" + resultobj+"' target='_new'>Open or Download PDF</a>";
+            $('#pdfresult').html(resulthtml);
+        },
+        error: function(msg) { alert("An Error occured!"); }
+    });
+    return false;
+    }
+    </script>
+{% endblock %}
+
+{% block content %}
+<div class="">
+
+        <h2>Script Renderer </h2></hr>
+        <p>This is an <b>experimental</b> online service based on
+         <a href="https://savannah.nongnu.org/projects/pypdflib">PyPDFLib library</a> in development. This library projects objective is to develop an opensource
+         pdf rendering library which can support all complex scripts. It is in development and this service is <b>not bug-free</b> now.</p>
+        <h3>Generate PDF of a wiki page</h3>
+        <form id="wiki2pdfform" action="" method="post">
+            <div class="control-group">
+                Wiki URL: <input type="text" name="wikiurl" value="http://ml.wikipedia.org/wiki/Mango"  style="width:30em;" id="wikiurl"/>
+                <div class="control">
+                    <input  type="submit" id="Render" value="Convert to PDF"  name="action" style="width:10em;"/>
+                </div>
+            </div>
+            <div id="pdfprogress" class="alert alert-info hide"></div>
+            <div id="pdfresult" class="alert alert-info hide"></div>
+            <div id="pdferror" class="alert alert-error hide"></div>
+        </form>
+
+        <h3>Convert Text to Image</h3>
+        <form class="form-horizontal" action="" method="post" id="rendertext">
+        <div class="control-group">
+            <div class="control">
+                <textarea  name='text' id='id1'></textarea>
+            </div>
+             <div class="control">
+                 Width: <input type="text"  name="width" value="600" style="width:5em;"/>
+             </div>
+             <div class="control">
+                 Height: <input type="text"  name="height" value="800" style="width:5em;"/>
+             </div>
+             <div class="control">
+                 Font Size: <input type="text"  name="fontsize"  id="fontsize" value="10" style="width:5em;"/>
+             </div>
+             <div class="control">
+                 Font Color: <select id="fontcolor" name="fontcolor">
+                     <option value="Black">Black</option>
+                     <option value="Blue">Blue</option>
+                     <option value="Red">Red</option>
+                     <option value="Yellow">Yellow</option>
+                     <option value="Green">Green</option>
+                 </select>
+             </div>
+             <div class="control">
+                 Output Format: <select id="format" name="format">
+                     <option value="png">PNG Image</option>
+                     <option value="svg">SVG Image</option>
+                     <option value="pdf">PDF</option>
+                     </select>
+             </div>
+             <p>Note: Give height or width as 0 for auto sizing the output.</p>
+             <p align=center>
+                <div class="control">
+                    <input  type="submit" id="Render" value="Render"  name="action" style="width:5em;"/>
+                </div>
+             </p>
+             </br>
+        </div>
+        </form>
+            <div id="renderprogress" class="alert alert-info hide"></div>
+            <div id="renderresult" class="alert alert-info hide"></div>
+            <div id="rendererror" class="alert alert-error hide"></div>
+        <div id="documentation">
+        <h2>Module Information</h2>
+        This module uses pango cairo python apis for rendering. To get this running , you should have python bindings of pango and cairo installed in your system.
+        For PDF generation, the module uses PyPDFLib library. This module is in development and APIs are not stable or final.
+        <h3>Bugs? Suggestions? Let us know!</h3>
+        If you see any bug in this application or you have any suggestion for improvement, just mail to <a href="mailto:pypdflib-dev@nongnu.org">pypdflib-dev@nongnu.org</a> with details. You can also report the  bug at <a href="https://savannah.nongnu.org/bugs/?group=pypdflib">PyPDFLib bug tracker</a>
+        <h2>Python API</h2>
+        <p>You can use Silpa python APIs to renedr a custom text to any image format or PDF. After installing silpa, refer the following example for using the api.
+        The text can be in any script, including Right to Left scripts.
+        </p>
+        <code><pre class="code">
+        from silpa.modules import render
+        render=render.getInstance()
+        #Render the text to SVG format. width=100, height= 200 pixels
+        render.render_text("Your text goes here", "svg", 100,200)
+        #Render the text to png format. width=100, height will be automatcally set based the content size
+        render.render_text("Your text goes here", "png", 100 ,0)
+        # Render the text to a PDF
+        render.render_text("Your text goes here", "pdf", 500 , 500)
+        </pre>
+        </code>
+        <p>The render_text method return the name of the generated image.(TODO: Make the path of the image configurable)</p>
+        <h2>Python JSON RPC</h2>
+        <p>You will require JSON RPC client from here: http://json-rpc.org/wiki/python-json-rpc</p>
+        <code><pre>
+        from jsonrpc import ServiceProxy
+        proxy = ServiceProxy("http://localhost/silpa/JSONRPC")
+        print s.modules.Render.render_text("Your text goes here", "svg", 100,200)
+        </pre></code>
+        <h2>PHP JSON RPC</h2>
+        <p>A sample PHP client to use the Silpa's JSON RPC service is given below.</p>
+           <code><pre class="code">
+
+        define ('HOSTNAME', 'http://silpa.smc.org.in/JSONRPC');
+        $url = HOSTNAME;
+        // Open the Curl session
+        $session = curl_init($url);
+        // If it's a POST, put the POST data in the body
+        $postvars = '{"method": "modules.Render.render_text", "params": ["Your text goes here", "png", 100,100], "id":"jsonrpc"}';
+        curl_setopt ($session, CURLOPT_POST, true);
+        curl_setopt ($session, CURLOPT_POSTFIELDS, $postvars);
+        // Don't return HTTP headers. Do return the contents of the call
+        curl_setopt($session, CURLOPT_HEADER, false);
+        curl_setopt($session, CURLOPT_RETURNTRANSFER, true);
+        // Make the call
+        $json = curl_exec($session);
+        // The web service returns json. Set the Content-Type appropriately
+        header("Content-Type: application/json");
+        echo $json;
+        $obj =  json_decode($json,false);
+        $result  =  $obj->{"result"};
+        echo $result;
+        curl_close($session);
+        </pre>
+        </code>
+        <p>The result will contain the image name. the image can be accessed by http://silpa.smc.org.in/Render?image=abcd.png</p>
+        <h2>Wiki to PDF</h2>
+        The wiki2pdf method is accessible by the following JSON:
+        <code>
+        <pre class="code">
+            $postvars = '{"method": "modules.Render.wiki2pdf", "params": ["http://en.wikipedia.org/wiki/Kerala"], "id":"jsonrpc"}';
+        </pre>
+        </code>
+        </div>
+        <h2>Script Renderer </h2></hr>
+        <p>This is an <b>experimental</b> online service based on
+         <a href="https://savannah.nongnu.org/projects/pypdflib">PyPDFLib library</a> in development. This library projects objective is to develop an opensource
+         pdf rendering library which can support all complex scripts. It is in development and this service is <b>not bug-free</b> now.</p>
+        <h3>Generate PDF of a wiki page</h3>
+        <form id="wiki2pdfform" class="form-horizontal" action="" method="post"  onsubmit="return renderpdf(this); " >
+            Wiki URL: <input type="text" name="wikiurl" value="http://ml.wikipedia.org/wiki/Mango"  style="width:30em;" id="wikiurl"/>
+            <input  type="submit" id="Render" value="Convert to PDF"  name="action" style="width:10em;"/>
+            <div id="pdfprogress"></div>
+            <div id="pdfresult" ></div>
+        </form>
+</div>
+{% endblock %}
