@@ -17,6 +17,6 @@ setup(
     packages = find_packages(),
     include_package_data = True,
     setup_requires = ['setuptools-git'],
-    install_requires = ['setuptools','hyphenation'],
+    install_requires = ['setuptools','hyphenation', 'pypdflib', 'pyquery'],
     zip_safe = False,
     )

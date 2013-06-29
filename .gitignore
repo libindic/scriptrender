@@ -21,4 +21,5 @@ pip-log.txt
 # vim and emacs files 
 ~*
 *~
+fabfile.py
 .venv
