@@ -88,7 +88,7 @@ class Render:
         m = hashlib.md5()
         m.update(text.encode("utf-8"))
         filename = m.hexdigest()[0:5]+"."+file_type
-        outputfile = os.path.join(self.tmp_folder, filename)
+        outputfile = os.path.join(os.getcwd(),"static","tmp", filename)
         if file_type == 'png':
             surface = cairo.ImageSurface(cairo.FORMAT_ARGB32,
                                          int(width), int(height))
@@ -109,7 +109,7 @@ class Render:
         position_x = left_margin
         position_y = top_margin
         rgba = get_color(color)
-        context.set_source_rgbk(float(rgba.red), float(rgba.green),
+        context.set_source_rgba(float(rgba.red), float(rgba.green),
                                 float(rgba.blue), float(rgba.alpha))
         pc = pangocairo.CairoContext(context)
         paragraph_layout = pc.create_layout()
@@ -161,7 +161,7 @@ class Render:
             surface.write_to_png(str(outputfile))
         else:
             context.show_page()
-        return "modules/render/tmp/"+filename
+        return "/static/tmp/"+filename
 
     def get_module_name(self):
         return "Script Renderer"
