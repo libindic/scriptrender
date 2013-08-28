@@ -28,6 +28,7 @@ from pypdflib.styles import *
 import pango
 import os
 from HTMLParser import HTMLParser
+
 from pyquery import PyQuery as pq
 import urllib
 import urlparse
@@ -48,25 +49,27 @@ lang_codes = {'en':'en_US',
               'te':'te_IN'}
 
 class Wikiparser(HTMLParser):
-    def __init__(self, url, filename, font='serif', verbose=0):
+    def __init__(self, url,filename=None,path=None,verbose=0):
         "Initialise an object, passing 'verbose' to the superclass."
         HTMLParser.__init__(self)
         self.hyperlinks = []
         self.url = url
-        self.font = font
         self.language = detect_language(url)
-        tmp_folder = os.path.join(os.getcwd(), "static","tmp")
-        print(tmp_folder)
-        self.pdf = PDFWriter(os.path.join(tmp_folder, filename), StandardPaper.A4)
+        if filename is None:
+            filename = urllib.unquote(self.url.split("/")[-1]) + ".pdf"
+        if path is None:
+            path = os.getcwd()
+        fullpath = os.path.join(path, filename)
+        self.pdf = PDFWriter(fullpath, StandardPaper.A4)
         header = Header(text_align=pango.ALIGN_CENTER)
         #TODO Alignment not working.
         header.set_text(urllib.unquote(self.url))
         self.pdf.set_header(header)
         self.pdf.move_context(0, 500)
-        h1 = Text(urllib.unquote(self.url.split("/")[-1]), font=self.font, font_size=32)
+        h1 = Text(urllib.unquote(self.url.split("/")[-1]), font="serif", font_size=32)
         h1.color = StandardColors.Blue
         self.pdf.add_text(h1)
-        h2 = Text(urllib.unquote(self.url), font=self.font, font_size=16)
+        h2 = Text(urllib.unquote(self.url), font="serif", font_size=16)
         h2.color = StandardColors.Blue
         self.pdf.add_text(h2)
         footer = Footer(text_align=pango.ALIGN_CENTER)
@@ -100,7 +103,7 @@ class Wikiparser(HTMLParser):
 
     def handle_data(self, data):
         if data.strip() == "": return
-	if self.p or self.h1 or self.h2 or self.a or self.span or self.li or self.td or self.th or self.caption:
+        if self.p or self.h1 or self.h2 or self.a or self.span or self.li or self.td or self.th or self.caption:
             if self.buffer != None:
                 self.buffer += data
     def handle_starttag(self, tag, attrs):
@@ -171,6 +174,7 @@ class Wikiparser(HTMLParser):
         elif tag == 'sup' or tag == 'sub' or tag == 'b' or tag == 'i' or tag == 's' or tag == 'small' or tag == 'big' or tag == 'tt' or tag == 'u':
             if self.sup and self.buffer != None:
                 self.buffer += "</"+str(tag)+">"
+
 
     def start_img(self, attrs):
         src = [value for key, value in attrs if key == 'src']
@@ -397,7 +401,6 @@ class Wikiparser(HTMLParser):
             print("Error: Cound not download the image")
             pass
         return  output_filename
-
     def parse(self):
         opener = urllib2.build_opener()
         opener.addheaders = [('User-agent', 'Mozilla/5.0')]
@@ -414,7 +417,6 @@ class Wikiparser(HTMLParser):
         self.feed(page)
         self.close()
         self.pdf.flush()
-
 
 def cleanup(page):
     """
@@ -433,7 +435,6 @@ def cleanup(page):
     for section in unwanted_divs:
         document.remove(section.strip())
     return document.wrap('<div></div>').html().encode("utf-8")
-
 
 def detect_language(url):
     """
