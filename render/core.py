@@ -41,17 +41,23 @@ class Render:
         #	print ("File already exists.")
         return (os.path.join(self.tmp_folder, filename))
 
-    def render_text(self, text, file_type='png', width=0,
-                    height=0, color="Black", font='Serif', font_size=12):
+    def render_text(self, text, file_type='png',path=None,
+                    filename=None, width=0,
+                    height=0, color="Black",
+                    font='Serif', font_size=12):
         surface = None
+        print width
         width = int(width)
         height = int(height)
         font_size = int(font_size)
         text = text.decode("utf-8")
         m = hashlib.md5()
         m.update(text.encode("utf-8"))
-        filename = m.hexdigest()[0:5]+"."+file_type
-        outputfile = os.path.join(os.getcwd(),"static","tmp", filename)
+        if filename is None:
+            filename = m.hexdigest()[0:5]+"."+file_type
+        if path is None:
+            path = os.getcwd()
+        outputfile = os.path.join(path, filename)
         if file_type == 'png':
             surface = cairo.ImageSurface(cairo.FORMAT_ARGB32,
                                          int(width), int(height))
@@ -118,13 +124,13 @@ class Render:
                 width = line_width
             if height == 0:
                 height = position_y
-            return self.render_text(text, file_type, width + 2.5*left_margin,
+            return self.render_text(text, file_type, path,filename, width + 2.5*left_margin,
                                     height, color, font, font_size)
         if file_type == 'png':
             surface.write_to_png(str(outputfile))
         else:
             context.show_page()
-        return "/static/tmp/"+filename
+        return outputfile
 
     def get_module_name(self):
         return "Script Renderer"
