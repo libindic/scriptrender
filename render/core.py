@@ -27,14 +27,26 @@ from styles import *
 
 
 class Render:
+    """
+    The render class. Instantiate to get access to  the methods.
+    """
     def __init__(self):
         self.tmp_folder = "/static/tmp"
 
     def wiki2pdf(self, url, font='Serif'):
+        """
+        :param url: the url for the wiki page
+        :type url: str.
+        :param font: the font to be used for the pdf.
+        :type font: str.
+        :returns: the path to the generated pdf.
+        """
         m = hashlib.md5()
         m.update(url.encode("utf-8"))
         filename = m.hexdigest()[0:5]+".pdf"
-        #if not os.path.exists(os.path.join(os.path.dirname(__file__), "tmp",filename)):
+        filename = os.path.join(os.path.abspath(os.path.curdir),
+                                "tmp", filename)
+        print(filename)
         parser = Wikiparser(url, filename, font)
         parser.parse()
         #else:
@@ -45,6 +57,29 @@ class Render:
                     filename=None, width=0,
                     height=0, color="Black",
                     font='Serif', font_size=12):
+        """
+        :param text: the text to be rendered.
+        :type text: str.
+        :param file_type: required output format. accepts png, svg and pdf
+        :type file_type: str.
+        :param filename: filename for the output
+        :type filename: str.
+        :param path: the file path for the output. defaults to the current directory
+        :type path: str.
+        :param width: width of the output
+        :type width: int.
+        :param height: height of the output
+        :type height: int.
+        :param color: the background color for the rendering.
+        :type color: str.
+        :param font: the font to be used
+        :type font: str.
+        :param font_size: font size to be used. defaults to 12
+        :type font_size: int
+        :returns: the path to the generated rendering.
+
+        generates a rendering of the supplied text.
+        """
         surface = None
         print width
         width = int(width)
@@ -133,9 +168,15 @@ class Render:
         return outputfile
 
     def get_module_name(self):
+        """
+        returns the module name
+        """
         return "Script Renderer"
 
     def get_info(self):
+        """
+        returns info on the module
+        """
         return "Provides rendered images for Complex scripts"
 
 
