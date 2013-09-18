@@ -10,4 +10,10 @@ You will need to have pango and cairo installed on your system along with pycair
 You will probably have them if you have pygtk on  your system.
 
 pycairo does not install in virtualenvs,so use you distributions package manger to 
-install  pycairo or use  pip to install pycairo system wide.
+install  pycairo or use  pip to install pycairo system wide. Also try
+installing pygtk if you can't find pycairo or pango in your distributions
+repositories.
+
+Run tests with python setup.pytest
+
+You can find the documentaion [here](http://render.readthedocs.org/en/latest/).
