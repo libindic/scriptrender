@@ -33,19 +33,21 @@ class Render:
     def __init__(self):
         self.tmp_folder = "/static/tmp"
 
-    def wiki2pdf(self, url, font='Serif'):
+    def wiki2pdf(self, url, path=None, font='Serif'):
         """
         :param url: the url for the wiki page
         :type url: str.
         :param font: the font to be used for the pdf.
         :type font: str.
+        :param path: output path.Defaults to current dir
         :returns: the path to the generated pdf.
         """
+        if path is None:
+            path = os.path.abspath(os.path.curdir)
         m = hashlib.md5()
         m.update(url.encode("utf-8"))
         filename = m.hexdigest()[0:5]+".pdf"
-        filename = os.path.join(os.path.abspath(os.path.curdir),
-                                "tmp", filename)
+        filename = os.path.join(path, filename)
         print(filename)
         parser = Wikiparser(url, filename, font)
         parser.parse()
