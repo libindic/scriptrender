@@ -24,3 +24,5 @@ pip-log.txt
 *~
 fabfile.py
 .venv
+/.ropeproject/
+*.pdf

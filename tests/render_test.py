@@ -1,7 +1,7 @@
 #! /usr/bin/python
 
 import unittest
-from render import getInstance
+from scriptrender import getInstance
 import os
 
 
