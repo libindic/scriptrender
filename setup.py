@@ -2,7 +2,7 @@
 
 from setuptools import setup, find_packages
 
-name = "render"
+name = "scriptrender"
 
 setup(
     name=name,
