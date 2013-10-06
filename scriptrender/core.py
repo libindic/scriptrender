@@ -55,10 +55,9 @@ class Render:
         #	print ("File already exists.")
         return (os.path.join(self.tmp_folder, filename))
 
-    def render_text(self, text, file_type='png',path=None,
-                    filename=None, width=0,
+    def render_text(self, text, file_type='png', width=0,
                     height=0, color="Black",
-                    font='Serif', font_size=12):
+                    font='Serif', font_size=12, path=None, filename=None):
         """
         :param text: the text to be rendered.
         :type text: str.
@@ -83,7 +82,6 @@ class Render:
         generates a rendering of the supplied text.
         """
         surface = None
-        print width
         width = int(width)
         height = int(height)
         font_size = int(font_size)
