@@ -31,7 +31,7 @@ class Render:
     The render class. Instantiate to get access to  the methods.
     """
     def __init__(self):
-        self.tmp_folder = "/static/tmp"
+        self.tmp_folder = os.path.abspath(os.path.curdir) + "/static/output/"
 
     def wiki2pdf(self, url, path=None, font='Serif'):
         """
@@ -43,17 +43,14 @@ class Render:
         :returns: the path to the generated pdf.
         """
         if path is None:
-            path = os.path.abspath(os.path.curdir)
+            path = self.tmp_folder;
         m = hashlib.md5()
         m.update(url.encode("utf-8"))
         filename = m.hexdigest()[0:5]+".pdf"
-        filename = os.path.join(path, filename)
-        print(filename)
-        parser = Wikiparser(url, filename, font)
+        filepath = os.path.join(path, filename)
+        parser = Wikiparser(url, filepath, font)
         parser.parse()
-        #else:
-        #	print ("File already exists.")
-        return (os.path.join(self.tmp_folder, filename))
+        return filename
 
     def render_text(self, text, file_type='png', width=0,
                     height=0, color="Black",

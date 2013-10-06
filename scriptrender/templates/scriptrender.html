@@ -93,7 +93,7 @@ $("#pdferror").hide()
         $("#pdfresult").show();
             var resultobj =  msg.result ;
             console.log(resultobj);
-            var resulthtml= "<a href= '" + resultobj+"' target='_new'>Open or Download PDF</a>";
+            var resulthtml= "<a href= '/static/output/" + resultobj+"' target='_new'>Open or Download PDF</a>";
             $('#pdfresult').html(resulthtml);
         },
         error: function(msg) { 
