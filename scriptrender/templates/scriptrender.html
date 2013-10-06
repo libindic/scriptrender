@@ -54,7 +54,7 @@ $("document").ready(function(){
                 var resultobj =  msg.result
                 var resulthtml=""
                 if (type=="png")
-                    resulthtml="<img class='img-polaroid' src='"+ resultobj+"' style='border:solid;border-width:2px;' />";
+                    resulthtml="<img class='img-polaroid' src='/static/output/"+ resultobj+"' style='border:solid;border-width:2px;' />";
                 else
                     resulthtml= "<a class='btn' href= '" + resultobj+"' target='_new'>Open or Download " + type +"</a>";
                 

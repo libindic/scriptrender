@@ -31,7 +31,7 @@ class Render:
     The render class. Instantiate to get access to  the methods.
     """
     def __init__(self):
-        self.tmp_folder = os.path.abspath(os.path.curdir) + "/static/output/"
+        self.output_path = os.path.abspath(os.path.curdir) + "/static/output/"
 
     def wiki2pdf(self, url, path=None, font='Serif'):
         """
@@ -43,7 +43,7 @@ class Render:
         :returns: the path to the generated pdf.
         """
         if path is None:
-            path = self.tmp_folder;
+            path = self.output_path
         m = hashlib.md5()
         m.update(url.encode("utf-8"))
         filename = m.hexdigest()[0:5]+".pdf"
@@ -88,7 +88,7 @@ class Render:
         if filename is None:
             filename = m.hexdigest()[0:5]+"."+file_type
         if path is None:
-            path = os.getcwd()
+            path = self.output_path
         outputfile = os.path.join(path, filename)
         if file_type == 'png':
             surface = cairo.ImageSurface(cairo.FORMAT_ARGB32,
@@ -162,7 +162,7 @@ class Render:
             surface.write_to_png(str(outputfile))
         else:
             context.show_page()
-        return outputfile
+        return filename
 
     def get_module_name(self):
         """
