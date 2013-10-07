@@ -6,8 +6,8 @@ name = "scriptrender"
 
 setup(
     name=name,
-    version="0.1",
-    url="http://silpa.org.in/NGram",
+    version="0.2.1",
+    url="http://silpa.org.in/Render",
     license="LGPL-3.0",
     description="Convert wiki pages to pdf and text into images",
     author="Santhosh Thottingal",

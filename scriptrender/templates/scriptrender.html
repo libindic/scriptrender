@@ -1,42 +1,37 @@
 {% extends "silpa.html" %}
 {% block modulescript %}
 <script type="text/javascript">
-$("document").ready(function(){
-
+    $("document").ready(function(){
         $("#wiki2pdfform").submit(function(event)
         {
             event.preventDefault();
-            console.log(this);
             renderpdf(this);
-
-            })
+        });
         $("#rendertext").submit(function(event)
         {
             event.preventDefault();
-            console.log(this);
             rendercontent(this);
-
-            })
-        })
-
+        });
+    });
 
     function rendercontent(form)
     {
-        $('#progress').html("Please Wait..");
-        $('#result').html("");
-        var text= form.text.value;
-        var width= form.width.value;
-        var height= form.height.value;
-        var size = form.fontsize.value;
-        var type = $('#format').val();
-        var color = $('#fontcolor').val();
+        var progress = $('#renderprogress'),
+            error = $('#rendererror'),
+            result = $('#renderresult'),
+            type = $('#format').val(),
+            jsonRequest = {
+                "method" :  "scriptrender.render_text",
+                "params" : [
+                    form.text.value,
+                    type,
+                    form.width.value,
+                    form.height.value,
+                    $('#fontcolor').val()
+                 ],
+                "id" : ""
+            };
 
-        var jsonRequest = {
-            "method" :  "render.render_text",
-            "params" : [text,type,width,height,color],
-            "id" : ""
-        };
-        console.log(jsonRequest)
         $.ajax({
             type: "POST",
             contentType: "application/json; charset=utf-8",
@@ -44,65 +39,58 @@ $("document").ready(function(){
             data: JSON.stringify(jsonRequest),
             dataType: "json",
             beforeSend:function(){
-            $("#renderprogress").show().html("Rendering...please wait.")
-            $("#rendererror").hide()
-            $("#renderresult").hide()
+                progress.show().html("Rendering...please wait.");
+                result.empty();
+                error.empty();
             },
             success: function(msg) {
-            $("#renderprogress").hide()
-
-                var resultobj =  msg.result
-                var resulthtml=""
-                if (type=="png")
-                    resulthtml="<img class='img-polaroid' src='"+ resultobj+"' style='border:solid;border-width:2px;' />";
-                else
-                    resulthtml= "<a class='btn' href= '" + resultobj+"' target='_new'>Open or Download " + type +"</a>";
-                
-            $("#renderresult").show().html(resulthtml);
+                progress.hide();
+                var resultobj =  msg.result;
+                if (type=="png") {
+                    resulthtml="<img class='img-polaroid' src='/static/output/"+ resultobj+"' style='border:solid;border-width:2px;' />";
+                } else {
+                    resulthtml= "<a class='btn' href='/static/output/" + resultobj+"' target='_new'>Open or Download " + type +"</a>";
+                }
+                result.show().html(resulthtml);
             },
             error: function(msg) {
-            $("#renderresult").hide()
-            $("#rendererror").show().html("Something went wrong...")
-            
+                error.show().html("Something went wrong...")
             }
         });
-   }
+    };
 
     function renderpdf(form){
-        $('#pdfprogress').html("Please Wait..");
-    var url= form.wikiurl.value;
-    var jsonRequest = {
-         "method" :  "render.wiki2pdf",
-         "params" : [url],
-         "id" : ""
+        var progress = $('#pdfprogress'),
+            error = $('#pdferror'),
+            result = $('#pdfresult');
+
+        $.ajax({
+            type: "POST",
+            contentType: "application/json; charset=utf-8",
+            url: "JSONRPC",
+            data: JSON.stringify({
+                "method" :  "scriptrender.wiki2pdf",
+                "params" : [form.wikiurl.value],
+                "id" : ""
+            }),
+            dataType: "json",
+            beforeSend: function(){
+                error.hide()
+                result.hide();
+                progress.html("Please wait...").show();
+            },
+            success: function(msg) {
+                progress.hide();
+                var resulthtml= "<a href= '/static/output/" + msg.result + "' target='_new'>Open or Download PDF</a>";
+                result.show().html(resulthtml);
+            },
+            error: function(msg) {
+                progress.hide();
+                error.show().html("An Error occured!");
+            }
+        });
     };
-        console.log(jsonRequest)
-    $.ajax({
-        type: "POST",
-        contentType: "application/json; charset=utf-8",
-        url: "JSONRPC",
-        data: JSON.stringify(jsonRequest),
-        dataType: "json",
-        beforeSend: function(){
-$("#pdferror").hide()
-        $("#pdfresult").hide();
-                    $("#pdfprogress").show()
-                        },
-        success: function(msg) {
-        $("#pdfprogress").hide();
-        $("#pdfresult").show();
-            var resultobj =  msg.result ;
-            console.log(resultobj);
-            var resulthtml= "<a href= '" + resultobj+"' target='_new'>Open or Download PDF</a>";
-            $('#pdfresult').html(resulthtml);
-        },
-        error: function(msg) { 
-        $("#pdfprogress").hide();
-        $("#pdferror").show().html("An Error occured!");
-        }
-    });
-    }
-    </script>
+</script>
 {% endblock %}
 
 {% block content %}
@@ -135,7 +123,7 @@ $("#pdferror").hide()
                  <label>Width:</label> <input type="text" class="input-small"  name="width" value="600" style="width:5em;"/>
              </div>
              <div class="control">
-                 <label>Height:</label> <input type="text" class="input-small"  name="height" value="800" style="width:5em;"/>
+                 <label>Height:</label> <input type="text" class="input-small"  name="height" value="400" style="width:5em;"/>
              </div>
              <div class="control">
                  <label>Font Size:</label> <input type="text"  name="fontsize"  id="fontsize" value="10" style="width:5em;"/>

@@ -31,7 +31,7 @@ class Render:
     The render class. Instantiate to get access to  the methods.
     """
     def __init__(self):
-        self.tmp_folder = "/static/tmp"
+        self.output_path = os.path.abspath(os.path.curdir) + "/static/output/"
 
     def wiki2pdf(self, url, path=None, font='Serif'):
         """
@@ -43,22 +43,18 @@ class Render:
         :returns: the path to the generated pdf.
         """
         if path is None:
-            path = os.path.abspath(os.path.curdir)
+            path = self.output_path
         m = hashlib.md5()
         m.update(url.encode("utf-8"))
         filename = m.hexdigest()[0:5]+".pdf"
-        filename = os.path.join(path, filename)
-        print(filename)
-        parser = Wikiparser(url, filename, font)
+        filepath = os.path.join(path, filename)
+        parser = Wikiparser(url, filepath, font)
         parser.parse()
-        #else:
-        #	print ("File already exists.")
-        return (os.path.join(self.tmp_folder, filename))
+        return filename
 
-    def render_text(self, text, file_type='png',path=None,
-                    filename=None, width=0,
+    def render_text(self, text, file_type='png', width=0,
                     height=0, color="Black",
-                    font='Serif', font_size=12):
+                    font='Serif', font_size=12, path=None, filename=None):
         """
         :param text: the text to be rendered.
         :type text: str.
@@ -83,7 +79,6 @@ class Render:
         generates a rendering of the supplied text.
         """
         surface = None
-        print width
         width = int(width)
         height = int(height)
         font_size = int(font_size)
@@ -93,7 +88,7 @@ class Render:
         if filename is None:
             filename = m.hexdigest()[0:5]+"."+file_type
         if path is None:
-            path = os.getcwd()
+            path = self.output_path
         outputfile = os.path.join(path, filename)
         if file_type == 'png':
             surface = cairo.ImageSurface(cairo.FORMAT_ARGB32,
@@ -167,7 +162,7 @@ class Render:
             surface.write_to_png(str(outputfile))
         else:
             context.show_page()
-        return outputfile
+        return filename
 
     def get_module_name(self):
         """
