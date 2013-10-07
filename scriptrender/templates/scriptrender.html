@@ -41,7 +41,7 @@
             beforeSend:function(){
                 progress.show().html("Rendering...please wait.");
                 result.empty();
-                error.empty();
+                error.hide();
             },
             success: function(msg) {
                 progress.hide();
@@ -54,6 +54,7 @@
                 result.show().html(resulthtml);
             },
             error: function(msg) {
+                progress.hide();
                 error.show().html("Something went wrong...")
             }
         });
