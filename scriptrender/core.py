@@ -17,6 +17,7 @@
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 import os
+import sys
 import cairo
 import hashlib
 import pango
@@ -31,7 +32,8 @@ class Render:
     The render class. Instantiate to get access to  the methods.
     """
     def __init__(self):
-        self.output_path = os.path.abspath(os.path.curdir) + "/static/output/"
+        # silpa-flask location
+        self.output_path = os.path.join(sys.path[0], "static", "output")
 
     def wiki2pdf(self, url, path=None, font='Serif'):
         """
