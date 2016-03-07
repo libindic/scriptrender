@@ -17,6 +17,10 @@ setup(
     include_package_data=True,
     setup_requires=['setuptools-git'],
     test_suite='tests',
-    install_requires=['setuptools', 'hyphenation', 'pypdflib', 'pyquery','PIL'],
+    install_requires=['setuptools',
+                      'hyphenation',
+                      'https://github.com/Project-SILPA/pypdflib',
+                      'pyquery',
+                      'Pillow'],
     zip_safe=False,
 )
