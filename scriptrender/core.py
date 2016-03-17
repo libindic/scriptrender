@@ -158,8 +158,9 @@ class Render:
                 width = line_width
             if height == 0:
                 height = position_y
-            return self.render_text(text, file_type, path,filename, width + 2.5*left_margin,
-                                    height, color, font, font_size)
+                width = width + 2.5 * left_margin
+            return self.render_text(text, file_type, width, height, color,
+                                    font, font_size, path, filename)
         if file_type == 'png':
             surface.write_to_png(str(outputfile))
         else:
