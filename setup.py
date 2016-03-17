@@ -19,8 +19,10 @@ setup(
     test_suite='tests',
     install_requires=['setuptools',
                       'hyphenation',
-                      'https://github.com/Project-SILPA/pypdflib',
-                      'pyquery',
-                      'Pillow'],
+                      'pypdflib',
+                      'pyquery'],
+    dependency_links=[
+        'git+https://github.com/libindic/pypdflib#egg=pypdflib-0.1.a3'
+    ],
     zip_safe=False,
 )
