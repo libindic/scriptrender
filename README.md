@@ -14,7 +14,12 @@ to install pycairo or use pip to install pycairo system wide. Also try
 installing pygtk if you can't find pycairo or pango in your distributions
 repositories.
 
-Run tests with `python setup.py test`
+pycairo does not install in virtualenvs,so use you distributions package manger to
+install  pycairo or use  pip to install pycairo system wide. Also try
+installing pygtk if you can't find pycairo or pango in your distributions
+repositories.
+
+Run tests with `python tests/render_test.py`
 
 You can find the documentaion [here](http://render.readthedocs.org/en/latest/).
 
