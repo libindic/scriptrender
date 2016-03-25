@@ -19,10 +19,7 @@ setup(
     test_suite='tests',
     install_requires=['setuptools',
                       'hyphenation',
-                      'pypdflib',
+                      'pdfkit',
                       'pyquery'],
-    dependency_links=[
-        'git+https://github.com/libindic/pypdflib#egg=pypdflib-0.1.a3'
-    ],
     zip_safe=False,
 )
