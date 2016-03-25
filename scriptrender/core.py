@@ -17,13 +17,13 @@
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 import os
+import pdfkit
 import sys
 import cairo
 import hashlib
 import pango
 import pangocairo
 import hyphenation
-from wiki2pdf import Wikiparser
 from styles import *
 
 
@@ -36,22 +36,13 @@ class Render:
         self.output_path = os.path.join(sys.path[0], "static", "output")
 
     def wiki2pdf(self, url, path=None, font='Serif'):
-        """
-        :param url: the url for the wiki page
-        :type url: str.
-        :param font: the font to be used for the pdf.
-        :type font: str.
-        :param path: output path.Defaults to current dir
-        :returns: the path to the generated pdf.
-        """
         if path is None:
             path = self.output_path
         m = hashlib.md5()
         m.update(url.encode("utf-8"))
         filename = m.hexdigest()[0:5]+".pdf"
         filepath = os.path.join(path, filename)
-        parser = Wikiparser(url, filepath, font)
-        parser.parse()
+        pdfkit.from_url(url, filepath)
         return filename
 
     def render_text(self, text, file_type='png', width=0,
@@ -64,7 +55,8 @@ class Render:
         :type file_type: str.
         :param filename: filename for the output
         :type filename: str.
-        :param path: the file path for the output. defaults to the current directory
+        :param path: the file path for the output.
+        defaults to the current directory
         :type path: str.
         :param width: width of the output
         :type width: int.
@@ -77,7 +69,6 @@ class Render:
         :param font_size: font size to be used. defaults to 12
         :type font_size: int
         :returns: the path to the generated rendering.
-
         generates a rendering of the supplied text.
         """
         surface = None
@@ -158,9 +149,9 @@ class Render:
                 width = line_width
             if height == 0:
                 height = position_y
-                width = width + 2.5 * left_margin
-            return self.render_text(text, file_type, width, height, color,
-                                    font, font_size, path, filename)
+            return self.render_text(text, file_type, path, filename,
+                                    width + 2.5*left_margin, height,
+                                    color, font, font_size)
         if file_type == 'png':
             surface.write_to_png(str(outputfile))
         else:
