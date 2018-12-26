@@ -19,7 +19,7 @@
 import os
 import pdfkit
 import sys
-import cairo
+import cairocffi as cairo
 import hashlib
 import pango
 import pangocairo

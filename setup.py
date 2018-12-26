@@ -19,6 +19,7 @@ setup(
     test_suite='tests',
     install_requires=['setuptools',
                       'hyphenation',
+                      'cairocffi',
                       'pdfkit',
                       'pyquery'],
     zip_safe=False,

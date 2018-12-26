@@ -1,3 +1,3 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
-from core  import getInstance
+from .core  import getInstance
